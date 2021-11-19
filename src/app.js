@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import SignUp from './controllers/SignUp.js';
 import SignIn from './controllers/SignIn.js';
+import getUser from './controllers/getUser.js';
 
 const app = express();
 app.use(express.json());
@@ -15,5 +16,7 @@ app.get('/status', (req, res) => {
 app.post('/sign-up', SignUp);
 
 app.post('/sign-in', SignIn);
+
+app.get('/user', getUser);
 
 export default app;
