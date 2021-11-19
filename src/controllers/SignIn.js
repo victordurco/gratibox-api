@@ -57,7 +57,7 @@ const SignIn = async (req, res) => {
       name: user.name,
     });
   } catch (err) {
-    return res.status(500).send(err);
+    return res.sendStatus(500);
   }
 };
 
