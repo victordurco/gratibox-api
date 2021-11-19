@@ -42,4 +42,38 @@ const existingUserFactory = async () => {
   };
 };
 
-export { validNewUserFactory, invalidNewUserFactory, existingUserFactory };
+const validUserFactory = async () => {
+  const user = await existingUserFactory();
+  return {
+    email: user.email,
+    password: user.password,
+  };
+};
+
+const wrongPasswordUserFactory = async () => {
+  const validUser = await validUserFactory();
+
+  return {
+    email: validUser.email,
+    password: 'wrongpassword',
+  };
+};
+
+const invalidUserFactory = () => ({
+  email: faker.internet.email(),
+});
+
+const nonExistentUserFactory = () => ({
+  email: 'nonexistentemail@nonexistent.com',
+  password: faker.internet.password(),
+});
+
+export {
+  validNewUserFactory,
+  invalidNewUserFactory,
+  existingUserFactory,
+  validUserFactory,
+  wrongPasswordUserFactory,
+  invalidUserFactory,
+  nonExistentUserFactory,
+};
