@@ -1,7 +1,7 @@
 /* eslint-disable comma-dangle */
 import bcrypt from 'bcrypt';
 import connection from '../database.js';
-import signUpSchema from '../schemas/auth.schemas';
+import signUpSchema from '../schemas/auth.schemas.js';
 
 const SignUp = async (req, res) => {
   const { name, email, password } = req.body;
@@ -32,7 +32,6 @@ const SignUp = async (req, res) => {
     );
     return res.sendStatus(201);
   } catch (err) {
-    console.error(err);
     return res.sendStatus(500);
   }
 };
