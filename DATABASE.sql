@@ -189,10 +189,10 @@ ALTER SEQUENCE public.states_id_seq OWNED BY public.states.id;
 
 
 --
--- Name: user; Type: TABLE; Schema: public; Owner: postgres
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."user" (
+CREATE TABLE public.users (
     id integer NOT NULL,
     name character varying(255) NOT NULL,
     email character varying(255) NOT NULL,
@@ -201,13 +201,13 @@ CREATE TABLE public."user" (
 );
 
 
-ALTER TABLE public."user" OWNER TO postgres;
+ALTER TABLE public.users OWNER TO postgres;
 
 --
--- Name: user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.user_id_seq
+CREATE SEQUENCE public.users_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -216,13 +216,13 @@ CREATE SEQUENCE public.user_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.user_id_seq OWNER TO postgres;
+ALTER TABLE public.users_id_seq OWNER TO postgres;
 
 --
--- Name: user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.user_id_seq OWNED BY public."user".id;
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
@@ -299,10 +299,10 @@ ALTER TABLE ONLY public.states ALTER COLUMN id SET DEFAULT nextval('public.state
 
 
 --
--- Name: user id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_id_seq'::regclass);
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
 
 
 --
@@ -333,6 +333,8 @@ COPY public.monthly_plan (id, user_id, delivery_day, tea, incense, organics) FRO
 --
 
 COPY public.plans_types (id, name) FROM stdin;
+1	weekly
+2	monthly
 \.
 
 
@@ -372,10 +374,10 @@ COPY public.states (id, name, acronym) FROM stdin;
 
 
 --
--- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."user" (id, name, email, password, plan_type) FROM stdin;
+COPY public.users (id, name, email, password, plan_type) FROM stdin;
 \.
 
 
@@ -412,7 +414,7 @@ SELECT pg_catalog.setval('public.monthly_plan_user_id_seq', 1, false);
 -- Name: plans_types_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.plans_types_id_seq', 1, false);
+SELECT pg_catalog.setval('public.plans_types_id_seq', 2, true);
 
 
 --
@@ -423,10 +425,10 @@ SELECT pg_catalog.setval('public.states_id_seq', 1, false);
 
 
 --
--- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.user_id_seq', 1, false);
+SELECT pg_catalog.setval('public.users_id_seq', 1, false);
 
 
 --
@@ -469,19 +471,19 @@ ALTER TABLE ONLY public.states
 
 
 --
--- Name: user user_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."user"
-    ADD CONSTRAINT user_email_key UNIQUE (email);
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_email_key UNIQUE (email);
 
 
 --
--- Name: user user_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: users users_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."user"
-    ADD CONSTRAINT user_pk PRIMARY KEY (id);
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pk PRIMARY KEY (id);
 
 
 --
@@ -497,7 +499,7 @@ ALTER TABLE ONLY public.weekly_plan
 --
 
 ALTER TABLE ONLY public.addresses
-    ADD CONSTRAINT addresses_fk0 FOREIGN KEY (user_id) REFERENCES public."user"(id);
+    ADD CONSTRAINT addresses_fk0 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -513,15 +515,15 @@ ALTER TABLE ONLY public.addresses
 --
 
 ALTER TABLE ONLY public.monthly_plan
-    ADD CONSTRAINT monthly_plan_fk0 FOREIGN KEY (user_id) REFERENCES public."user"(id);
+    ADD CONSTRAINT monthly_plan_fk0 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
--- Name: user user_fk0; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: users users_fk0; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."user"
-    ADD CONSTRAINT user_fk0 FOREIGN KEY (plan_type) REFERENCES public.plans_types(id);
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_fk0 FOREIGN KEY (plan_type) REFERENCES public.plans_types(id);
 
 
 --
@@ -529,10 +531,9 @@ ALTER TABLE ONLY public."user"
 --
 
 ALTER TABLE ONLY public.weekly_plan
-    ADD CONSTRAINT weekly_plan_fk0 FOREIGN KEY (user_id) REFERENCES public."user"(id);
+    ADD CONSTRAINT weekly_plan_fk0 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
 -- PostgreSQL database dump complete
 --
-
