@@ -42,6 +42,22 @@ const existingUserFactory = async () => {
   };
 };
 
+const existingUserWithPlanFactory = async () => {
+  const newUser = validNewUserFactory();
+  const encryptedPassword = bcrypt.hashSync(newUser.password, 10);
+  await connection.query(
+    `
+    INSERT INTO users (name, email, password, plan_type) VALUES ($1, $2, $3, $4);`,
+    [newUser.name, newUser.email, encryptedPassword, 1]
+  );
+
+  return {
+    name: newUser.name,
+    email: newUser.email,
+    password: newUser.password,
+  };
+};
+
 const validUserFactory = async () => {
   const user = await existingUserFactory();
   return {
@@ -72,6 +88,7 @@ export {
   validNewUserFactory,
   invalidNewUserFactory,
   existingUserFactory,
+  existingUserWithPlanFactory,
   validUserFactory,
   wrongPasswordUserFactory,
   invalidUserFactory,
