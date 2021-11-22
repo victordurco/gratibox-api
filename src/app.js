@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import signUp from './controllers/signUp.js';
 import signIn from './controllers/signIn.js';
-import getUser from './controllers/getUser.js';
+import { getUser, getSubscription } from './controllers/getUser.js';
 import getStates from './controllers/getStates.js';
 import auth from './middlewares/auth.js';
 import subscribe from './controllers/subscribe.js';
@@ -25,5 +25,7 @@ app.get('/user', getUser);
 app.get('/states', getStates);
 
 app.post('/subscribe', auth, subscribe);
+
+app.get('/subscription', auth, getSubscription);
 
 export default app;
