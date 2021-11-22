@@ -47,10 +47,10 @@ const getSubscription = async (req, res) => {
   const user = jwt.verify(token, jwtSecret);
 
   try {
-    const userQuery = await connection.query('SELECT * FROM users WHERE id = $1', [user.id]);
+    const userQuery = await connection.query('SELECT users.name, users.plan_type AS "planType" FROM users WHERE id = $1', [user.id]);
     const userData = userQuery.rows[0];
 
-    const subscriptionQuery = userData.plan_type === 1
+    const subscriptionQuery = userData.planType === 1
       ? `SELECT 
           weekly_plan.created_at AS "subscriptionDate", weekly_plan.tea, weekly_plan.incense, weekly_plan.organics, weekly_plan.delivery_day AS "deliveryDay"
         FROM weekly_plan
@@ -60,7 +60,7 @@ const getSubscription = async (req, res) => {
          FROM monthly_plan
         WHERE user_id = $1`;
 
-    const result = await connection.query(subscriptionQuery, [userData.id]);
+    const result = await connection.query(subscriptionQuery, [user.id]);
 
     const defaultSubscription = {
       deliveryDay: '',
@@ -74,7 +74,7 @@ const getSubscription = async (req, res) => {
     const { deliveryDay } = subscription;
     const nextDeliveries = [];
 
-    if (userData.plan_type === 1) {
+    if (userData.planType === 1) {
       const days = {
         sunday: 0,
         monday: 1,
@@ -95,7 +95,7 @@ const getSubscription = async (req, res) => {
         nextDate = dayjs(nextDate).add(7, 'day');
         nextDeliveries.push(nextDate.format('DD/MM/YYYY'));
       }
-    } else if (userData.plan_type === 2) {
+    } else if (userData.planType === 2) {
       const skipWeekend = (date) => {
         const dateWeekday = dayjs(date).format('dddd').toLocaleLowerCase();
         let finalDate = date;
@@ -124,7 +124,7 @@ const getSubscription = async (req, res) => {
 
     subscriptionDate = dayjs(subscriptionDate).format('DD/MM/YY');
 
-    res.send({
+    res.status(200).send({
       ...userData,
       subscription: {
         ...subscription,
