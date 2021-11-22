@@ -55,6 +55,7 @@ const SignIn = async (req, res) => {
     return res.status(200).send({
       token,
       name: user.name,
+      id: user.id,
       planType: user.plan_type,
     });
   } catch (err) {

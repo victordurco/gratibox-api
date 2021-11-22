@@ -30,6 +30,7 @@ const getUser = async (req, res) => {
 
     return res.status(200).send({
       name: user.name,
+      id: user.id,
     });
   } catch (err) {
     return res.sendStatus(500);
