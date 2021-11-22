@@ -31,3 +31,15 @@ describe('GET /user', () => {
     expect(result.status).toEqual(401);
   });
 });
+
+describe('GET /subscription', () => {
+  test('returns 200 with valid user token', async () => {
+    const validSession = await validSessionFactory();
+    const result = await supertest(app)
+      .get('/subscription')
+      .set('Authorization', `Bearer ${validSession.token}`);
+    expect(result.status).toEqual(200);
+    expect(result.body).toHaveProperty('name');
+    expect(result.body).toHaveProperty('planType');
+  });
+});
