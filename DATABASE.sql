@@ -31,7 +31,7 @@ CREATE TABLE public.addresses (
     address character varying(255) NOT NULL,
     city character varying(255) NOT NULL,
     state_id integer NOT NULL,
-    name integer NOT NULL
+    name character varying(255) NOT NULL
 );
 
 
@@ -66,10 +66,11 @@ ALTER SEQUENCE public.addresses_id_seq OWNED BY public.addresses.id;
 CREATE TABLE public.monthly_plan (
     id integer NOT NULL,
     user_id integer NOT NULL,
-    delivery_day integer NOT NULL,
+    delivery_day character varying(255) NOT NULL,
     tea boolean NOT NULL,
     incense boolean NOT NULL,
-    organics boolean NOT NULL
+    organics boolean NOT NULL,
+    created_at timestamp with time zone DEFAULT now()
 );
 
 
@@ -154,6 +155,41 @@ ALTER SEQUENCE public.plans_types_id_seq OWNED BY public.plans_types.id;
 
 
 --
+-- Name: sessions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.sessions (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    token character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.sessions OWNER TO postgres;
+
+--
+-- Name: sessions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.sessions_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sessions_id_seq OWNER TO postgres;
+
+--
+-- Name: sessions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.sessions_id_seq OWNED BY public.sessions.id;
+
+
+--
 -- Name: states; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -235,7 +271,8 @@ CREATE TABLE public.weekly_plan (
     delivery_day character varying(255) NOT NULL,
     tea boolean NOT NULL,
     incense boolean NOT NULL,
-    organics boolean NOT NULL
+    organics boolean NOT NULL,
+    created_at timestamp with time zone DEFAULT now()
 );
 
 
@@ -292,6 +329,13 @@ ALTER TABLE ONLY public.plans_types ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
+-- Name: sessions id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sessions ALTER COLUMN id SET DEFAULT nextval('public.sessions_id_seq'::regclass);
+
+
+--
 -- Name: states id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -324,7 +368,7 @@ COPY public.addresses (id, user_id, cep, address, city, state_id, name) FROM std
 -- Data for Name: monthly_plan; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.monthly_plan (id, user_id, delivery_day, tea, incense, organics) FROM stdin;
+COPY public.monthly_plan (id, user_id, delivery_day, tea, incense, organics, created_at) FROM stdin;
 \.
 
 
@@ -335,6 +379,14 @@ COPY public.monthly_plan (id, user_id, delivery_day, tea, incense, organics) FRO
 COPY public.plans_types (id, name) FROM stdin;
 1	weekly
 2	monthly
+\.
+
+
+--
+-- Data for Name: sessions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.sessions (id, user_id, token) FROM stdin;
 \.
 
 
@@ -385,7 +437,7 @@ COPY public.users (id, name, email, password, plan_type) FROM stdin;
 -- Data for Name: weekly_plan; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.weekly_plan (id, user_id, delivery_day, tea, incense, organics) FROM stdin;
+COPY public.weekly_plan (id, user_id, delivery_day, tea, incense, organics, created_at) FROM stdin;
 \.
 
 
@@ -393,7 +445,7 @@ COPY public.weekly_plan (id, user_id, delivery_day, tea, incense, organics) FROM
 -- Name: addresses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.addresses_id_seq', 1, false);
+SELECT pg_catalog.setval('public.addresses_id_seq', 18, true);
 
 
 --
@@ -418,6 +470,13 @@ SELECT pg_catalog.setval('public.plans_types_id_seq', 2, true);
 
 
 --
+-- Name: sessions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.sessions_id_seq', 183, true);
+
+
+--
 -- Name: states_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -428,14 +487,14 @@ SELECT pg_catalog.setval('public.states_id_seq', 1, false);
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 1, false);
+SELECT pg_catalog.setval('public.users_id_seq', 425, true);
 
 
 --
 -- Name: weekly_plan_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.weekly_plan_id_seq', 1, false);
+SELECT pg_catalog.setval('public.weekly_plan_id_seq', 18, true);
 
 
 --
@@ -460,6 +519,14 @@ ALTER TABLE ONLY public.monthly_plan
 
 ALTER TABLE ONLY public.plans_types
     ADD CONSTRAINT plans_types_pk PRIMARY KEY (id);
+
+
+--
+-- Name: sessions sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sessions
+    ADD CONSTRAINT sessions_pkey PRIMARY KEY (id);
 
 
 --
@@ -516,6 +583,14 @@ ALTER TABLE ONLY public.addresses
 
 ALTER TABLE ONLY public.monthly_plan
     ADD CONSTRAINT monthly_plan_fk0 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: sessions sessions_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sessions
+    ADD CONSTRAINT sessions_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
